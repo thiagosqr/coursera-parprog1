@@ -1,4 +1,6 @@
 
+import java.lang.Math.pow
+
 import common._
 
 package object scalashop {
@@ -39,14 +41,28 @@ package object scalashop {
 
   /** Computes the blurred RGBA value of a single pixel of the input image. */
   def boxBlurKernel(src: Img, x: Int, y: Int, radius: Int): RGBA = {
-    // TODO implement using while loops
-    val p = src(x,y)
 
-    for{
+    val redChanAvg = channelAvg(red, src, x, y, radius)
+    val greenChanAvg = channelAvg(green, src, x, y, radius)
+    val blueChanAvg = channelAvg(blue, src, x, y, radius)
+    val alphaChanAvg = channelAvg(alpha, src, x, y, radius)
+
+    (redChanAvg + greenChanAvg + blueChanAvg + alphaChanAvg) / 4
+
+  }
+
+  def channelAvg(channel: RGBA => Int, src: Img, x: Int, y: Int, radius: Int): Int = {
+    val pixels = for {
+      xs <- (x - radius) to (x + radius)
+      ys <- (y - radius) to (y + radius)
+    } yield {
+
+      println(src(xs, ys))
+      channel(src(xs, ys))
 
     }
 
-
+    (pixels.reduce(_ + _) / pow(1 + radius * 2, 2)).toInt
   }
 
 
